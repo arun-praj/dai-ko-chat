@@ -7,10 +7,9 @@ import ScrollToBottom from "react-scroll-to-bottom";
 //    width: 400,
 // });
 let socket;
-const ENDPOINT = "https://daikochat.herokuapp.com/";
 
 const Chat = (props) => {
-   const ENDPOINT = "localhost:4000";
+   const ENDPOINT = "https://daikochat.herokuapp.com/";
    const [messages, setMessages] = useState([]);
    const [message, setMessage] = useState("");
    const [data, setData] = useState([]);
