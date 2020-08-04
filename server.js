@@ -1,0 +1,47 @@
+const express = require("express");
+const dotenv = require("dotenv");
+const http = require("http");
+const socketio = require("socket.io");
+
+const connect = require("./config/connect");
+
+dotenv.config({
+   path: "./config/config.env",
+});
+
+const app = express();
+const server = http.createServer(app);
+const io = socketio(server);
+
+connect();
+
+app.use("/", (req, res, next) => {
+   res.status(200).json({
+      status: "running",
+   });
+});
+
+io.on("connection", (socket) => {
+   console.log("a user connected");
+   socket.on("join", (user, callback) => {
+      socket.broadcast.emit("message", { text: `God ${user.name} has joined the chat.` });
+      // console.log(user.name);
+   });
+   socket.on("sendMessage", ({ name, message }, callback) => {
+      io.emit("message", { text: message, name: name });
+      callback();
+      console.log(message);
+   });
+   socket.on("disconnect", () => {
+      console.log("user left the chat");
+   });
+});
+
+const PORT = process.env.PORT || 4000;
+
+server.listen(PORT, (e) => {
+   if (e) {
+      return console.log("Error");
+   }
+   console.log(`Server Started : ${PORT}`);
+});
